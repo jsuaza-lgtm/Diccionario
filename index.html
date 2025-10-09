@@ -237,6 +237,15 @@
             <div class="category">
                 <div class="category-title">⚠️ Requiere Validación Manual</div>
 
+                <div class="estado-card" data-keywords="revision soportes autorizacion facturacion proceso">
+                    <div class="estado-nombre">Revision de soportes y autorizacion</div>
+                    <div class="estado-descripcion">
+                        Este registro hace parte del proceso de facturación y requiere revisión de los soportes documentales y autorización correspondiente antes de continuar.
+                    </div>
+                    <span class="tag tag-info">ℹ Hace parte del proceso de facturación</span>
+                    <span class="estado-accion">Revisar soportes y autorización</span>
+                </div>
+
                 <div class="estado-card" data-keywords="consultar proceso facturacion desconocido no identificado negocio entidad">
                     <div class="estado-nombre">Consultar Proceso de Facturación</div>
                     <div class="estado-descripcion">
@@ -244,6 +253,24 @@
                     </div>
                     <span class="tag tag-advertencia">⚠ Consultar con negocio</span>
                     <span class="estado-accion">Solicitar información a negocio</span>
+                </div>
+
+                <div class="estado-card" data-keywords="en proceso tramite pendiente espera">
+                    <div class="estado-nombre">En Proceso</div>
+                    <div class="estado-descripcion">
+                        El registro se encuentra actualmente en proceso de validación o trámite. Se debe esperar a que finalice el proceso antes de tomar alguna acción.
+                    </div>
+                    <span class="tag tag-info">ℹ En trámite</span>
+                    <span class="estado-accion">Esperar finalización del proceso</span>
+                </div>
+
+                <div class="estado-card" data-keywords="sin direccionamiento falta asignacion no asignado fecha vencida expirada">
+                    <div class="estado-nombre">Sin Direccionamiento</div>
+                    <div class="estado-descripcion">
+                        El registro no tiene un direccionamiento asignado, lo que significa que la fecha de direccionamiento ha vencido o no se ha establecido. Se requiere direccionar urgentemente al área correspondiente para su procesamiento.
+                    </div>
+                    <span class="tag tag-error">✗ Fecha de direccionamiento vencida</span>
+                    <span class="estado-accion">Direccionar urgentemente</span>
                 </div>
 
                 <div class="estado-card" data-keywords="sin reportar sede convenios externos">
@@ -546,7 +573,10 @@
             const data = [
                 ['Estado', 'Descripción', 'Categoría', 'Acción Recomendada'],
                 ['Facturar', 'El registro cumple con todos los requisitos necesarios y está listo para ser facturado. Todos los datos de autorización, vales y tarifas están correctos.', 'Estados Exitosos', 'Proceder a facturación'],
+                ['Revision de soportes y autorizacion', 'Este registro hace parte del proceso de facturación y requiere revisión de los soportes documentales y autorización correspondiente antes de continuar.', 'Requiere Validación Manual', 'Revisar soportes y autorización'],
                 ['Consultar Proceso de Facturación', 'El caso no coincide con ninguna regla conocida de subtipificación. Se debe solicitar al área de negocio información sobre a quién le pertenece facturar esa entidad o cómo se debe realizar el proceso de facturación.', 'Requiere Validación Manual', 'Solicitar información a negocio'],
+                ['En Proceso', 'El registro se encuentra actualmente en proceso de validación o trámite. Se debe esperar a que finalice el proceso antes de tomar alguna acción.', 'Requiere Validación Manual', 'Esperar finalización del proceso'],
+                ['Sin Direccionamiento', 'El registro no tiene un direccionamiento asignado, lo que significa que la fecha de direccionamiento ha vencido o no se ha establecido. Se requiere direccionar urgentemente al área correspondiente para su procesamiento.', 'Requiere Validación Manual', 'Direccionar urgentemente'],
                 ['Sin Reportar por parte de la sede', 'Aplica específicamente a "Convenios Externos" donde la sede no ha reportado la información necesaria para procesar la facturación.', 'Requiere Validación Manual', 'Esperar reporte de sede'],
                 ['Sin Número de Vale', 'El campo de número de vale está vacío o en blanco, pero es requerido para este tipo de servicio (consultas en Colsanitas o Medisanitas).', 'Errores de Número de Vale', 'Solicitar número de vale'],
                 ['Formato de Vale Incorrecto', 'El número de vale no tiene el formato correcto. Debe ser únicamente números (sin espacios, guiones, puntos o texto adicional).', 'Errores de Número de Vale', 'Corregir formato del vale'],
