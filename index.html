@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diccionario de Estados de Subtipificación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A90E2 0%, #50C9C3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4A90E2 0%, #50C9C3 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            background: linear-gradient(135deg, #4A90E2 0%, #50C9C3 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .estado-card {
+            background: #f8f9fa;
+            border-left: 4px solid #4A90E2;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .estado-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .estado-nombre {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .estado-descripcion {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .estado-accion {
+            display: inline-block;
+            background: #4A90E2;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+        
+        .tag-exito {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .tag-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .tag-advertencia {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .tag-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.2em;
+        }
+
+        .export-section {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #4A90E2 0%, #50C9C3 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .footer {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .footer img {
+            max-width: 250px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Diccionario de Estados de Subtipificación</h1>
+            <p>Guía completa de resultados de validación de facturas</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar por estado, descripción o tipo de error...">
+        </div>
+        
+        <div class="content" id="contentArea">
+            <!-- CATEGORÍA 1: ESTADOS EXITOSOS -->
+            <div class="category">
+                <div class="category-title">✅ Estados Exitosos</div>
+                
+                <div class="estado-card" data-keywords="facturar exitoso correcto validado aprobado">
+                    <div class="estado-nombre">Facturar</div>
+                    <div class="estado-descripcion">
+                        El registro cumple con todos los requisitos necesarios y está listo para ser facturado. Todos los datos de autorización, vales y tarifas están correctos.
+                    </div>
+                    <span class="tag tag-exito">✓ Aprobado</span>
+                    <span class="estado-accion">Proceder a facturación</span>
+                </div>
+            </div>
+
+            <!-- CATEGORÍA 2: VALIDACIÓN MANUAL -->
+            <div class="category">
+                <div class="category-title">⚠️ Requiere Validación Manual</div>
+
+                <div class="estado-card" data-keywords="consultar proceso facturacion desconocido no identificado negocio entidad">
+                    <div class="estado-nombre">Consultar Proceso de Facturación</div>
+                    <div class="estado-descripcion">
+                        El caso no coincide con ninguna regla conocida de subtipificación. Se debe solicitar al área de negocio información sobre a quién le pertenece facturar esa entidad o cómo se debe realizar el proceso de facturación.
+                    </div>
+                    <span class="tag tag-advertencia">⚠ Consultar con negocio</span>
+                    <span class="estado-accion">Solicitar información a negocio</span>
+                </div>
+
+                <div class="estado-card" data-keywords="sin reportar sede convenios externos">
+                    <div class="estado-nombre">Sin Reportar por parte de la sede</div>
+                    <div class="estado-descripcion">
+                        Aplica específicamente a "Convenios Externos" donde la sede no ha reportado la información necesaria para procesar la facturación.
+                    </div>
+                    <span class="tag tag-info">ℹ Pendiente de sede</span>
+                    <span class="estado-accion">Esperar reporte de sede</span>
+                </div>
+            </div>
+
+            <!-- CATEGORÍA 3: ERRORES DE NÚMERO DE VALE -->
+            <div class="category">
+                <div class="category-title">🎫 Errores de Número de Vale</div>
+                
+                <div class="estado-card" data-keywords="sin numero vale faltante vacio blanco">
+                    <div class="estado-nombre">Sin Número de Vale</div>
+                    <div class="estado-descripcion">
+                        El campo de número de vale está vacío o en blanco, pero es requerido para este tipo de servicio (consultas en Colsanitas o Medisanitas).
+                    </div>
+                    <span class="tag tag-error">✗ Dato faltante</span>
+                    <span class="estado-accion">Solicitar número de vale</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato vale incorrecto invalido texto espacios guiones puntos">
+                    <div class="estado-nombre">Formato de Vale Incorrecto</div>
+                    <div class="estado-descripcion">
+                        El número de vale no tiene el formato correcto. Debe ser únicamente números (sin espacios, guiones, puntos o texto adicional).
+                    </div>
+                    <span class="tag tag-error">✗ Formato inválido</span>
+                    <span class="estado-accion">Corregir formato del vale</span>
+                </div>
+
+                <div class="estado-card" data-keywords="numero vale cero 0">
+                    <div class="estado-nombre">Número de Vale en Cero</div>
+                    <div class="estado-descripcion">
+                        El número de vale está registrado como "0" (cero), lo cual no es un valor válido para identificar una autorización de servicio.
+                    </div>
+                    <span class="tag tag-error">✗ Valor inválido</span>
+                    <span class="estado-accion">Ingresar vale válido</span>
+                </div>
+            </div>
+
+            <!-- CATEGORÍA 4: ERRORES DE NÚMERO DE AUTORIZACIÓN -->
+            <div class="category">
+                <div class="category-title">🔐 Errores de Número de Autorización</div>
+                
+                <div class="estado-card" data-keywords="sin numero autorizacion faltante vacio blanco">
+                    <div class="estado-nombre">Sin Número de Autorización</div>
+                    <div class="estado-descripcion">
+                        El campo de número de autorización está vacío o en blanco, pero es requerido para este tipo de insumo o servicio.
+                    </div>
+                    <span class="tag tag-error">✗ Dato faltante</span>
+                    <span class="estado-accion">Solicitar autorización</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato autorizacion incorrecto invalido texto espacios guiones puntos">
+                    <div class="estado-nombre">Formato de Autorización Incorrecto</div>
+                    <div class="estado-descripcion">
+                        El número de autorización no cumple con el formato requerido. Debe ser únicamente números (sin espacios, guiones, puntos o texto) y tener al menos 6 dígitos.
+                    </div>
+                    <span class="tag tag-error">✗ Formato inválido</span>
+                    <span class="estado-accion">Corregir formato</span>
+                </div>
+
+                <div class="estado-card" data-keywords="numero autorizacion cero 0">
+                    <div class="estado-nombre">Número de Autorización en Cero</div>
+                    <div class="estado-descripcion">
+                        El número de autorización está registrado como "0" (cero), lo cual no es válido. Se requiere un número de autorización real.
+                    </div>
+                    <span class="tag tag-error">✗ Valor inválido</span>
+                    <span class="estado-accion">Ingresar autorización válida</span>
+                </div>
+            </div>
+
+            <!-- CATEGORÍA 5: ERRORES DE TARIFA -->
+            <div class="category">
+                <div class="category-title">💰 Errores de Tarifa</div>
+                
+                <div class="estado-card" data-keywords="sin tarifa cuota faltante vacio blanco">
+                    <div class="estado-nombre">Sin Tarifa de Cuota</div>
+                    <div class="estado-descripcion">
+                        El campo de tarifa de cuota está vacío, pero es requerido para este tipo de servicio. La tarifa debe estar registrada.
+                    </div>
+                    <span class="tag tag-error">✗ Dato faltante</span>
+                    <span class="estado-accion">Registrar tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="tarifa cero 0">
+                    <div class="estado-nombre">Tarifa en Cero / Tarifa de Cuota en Cero</div>
+                    <div class="estado-descripcion">
+                        La tarifa está registrada como "0" (cero), lo cual no es válido. Debe tener un valor correspondiente a las tarifas aceptadas.
+                    </div>
+                    <span class="tag tag-error">✗ Valor inválido</span>
+                    <span class="estado-accion">Ingresar tarifa correcta</span>
+                </div>
+
+                <div class="estado-card" data-keywords="tarifa cuota incorrecta invalida no aceptada eps sanitas">
+                    <div class="estado-nombre">Tarifa de Cuota Incorrecta</div>
+                    <div class="estado-descripcion">
+                        La tarifa ingresada no está dentro de las tarifas aceptadas (18200, 19200, 4500, 4700, 50300, 47700, 8000) dentro de la entidad EPS Sanitas. Se debe usar una de las tarifas válidas.
+                    </div>
+                    <span class="tag tag-error">✗ Tarifa no válida</span>
+                    <span class="estado-accion">Usar tarifa aceptada</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato tarifa incorrecto invalido">
+                    <div class="estado-nombre">Formato de Tarifa Incorrecto</div>
+                    <div class="estado-descripcion">
+                        El valor de la tarifa no tiene un formato numérico válido. Debe ser un número sin texto adicional.
+                    </div>
+                    <span class="tag tag-error">✗ Formato inválido</span>
+                    <span class="estado-accion">Corregir formato</span>
+                </div>
+            </div>
+
+            <!-- CATEGORÍA 6: ERRORES COMBINADOS -->
+            <div class="category">
+                <div class="category-title">🔄 Errores Combinados</div>
+                
+                <div class="estado-card" data-keywords="sin autorizacion sin tarifa doble error">
+                    <div class="estado-nombre">Sin Número de Autorización y Sin Tarifa de Cuota</div>
+                    <div class="estado-descripcion">
+                        Faltan ambos campos: el número de autorización y la tarifa de cuota. Ambos son requeridos.
+                    </div>
+                    <span class="tag tag-error">✗ Múltiples datos faltantes</span>
+                    <span class="estado-accion">Completar ambos campos</span>
+                </div>
+
+                <div class="estado-card" data-keywords="sin autorizacion formato tarifa incorrecto">
+                    <div class="estado-nombre">Sin Número de Autorización y Formato de Tarifa Incorrecto</div>
+                    <div class="estado-descripcion">
+                        Falta el número de autorización y además la tarifa tiene un formato incorrecto.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Completar autorización y corregir tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="sin autorizacion tarifa cero">
+                    <div class="estado-nombre">Sin Número de Autorización y Tarifa en Cero</div>
+                    <div class="estado-descripcion">
+                        Falta el número de autorización y la tarifa está en cero.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Completar autorización e ingresar tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="sin autorizacion tarifa incorrecta">
+                    <div class="estado-nombre">Sin Número de Autorización y Tarifa de Cuota Incorrecta</div>
+                    <div class="estado-descripcion">
+                        Falta el número de autorización y además la tarifa no es una de las aceptadas.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Completar autorización y usar tarifa válida</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato autorizacion sin tarifa">
+                    <div class="estado-nombre">Formato de Autorización Incorrecto y Sin Tarifa de Cuota</div>
+                    <div class="estado-descripcion">
+                        El formato de la autorización es incorrecto y además falta la tarifa.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Corregir autorización y agregar tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato autorizacion formato tarifa">
+                    <div class="estado-nombre">Formato de Autorización Incorrecto y Formato de Tarifa Incorrecto</div>
+                    <div class="estado-descripcion">
+                        Ambos campos tienen formato incorrecto: la autorización y la tarifa.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Corregir ambos formatos</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato autorizacion tarifa cero">
+                    <div class="estado-nombre">Formato de Autorización Incorrecto y Tarifa en Cero</div>
+                    <div class="estado-descripcion">
+                        El formato de la autorización es incorrecto y la tarifa está en cero.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Corregir autorización e ingresar tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="formato autorizacion tarifa incorrecta">
+                    <div class="estado-nombre">Formato de Autorización Incorrecto y Tarifa de Cuota Incorrecta</div>
+                    <div class="estado-descripcion">
+                        El formato de la autorización es incorrecto y la tarifa no es válida.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Corregir autorización y usar tarifa válida</span>
+                </div>
+
+                <div class="estado-card" data-keywords="autorizacion cero sin tarifa">
+                    <div class="estado-nombre">Número de Autorización en Cero y Sin Tarifa de Cuota</div>
+                    <div class="estado-descripcion">
+                        La autorización está en cero y falta la tarifa.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Ingresar autorización válida y tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="autorizacion cero formato tarifa">
+                    <div class="estado-nombre">Número de Autorización en Cero y Formato de Tarifa Incorrecto</div>
+                    <div class="estado-descripcion">
+                        La autorización está en cero y el formato de la tarifa es incorrecto.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Ingresar autorización válida y corregir tarifa</span>
+                </div>
+
+                <div class="estado-card" data-keywords="autorizacion cero tarifa cero doble cero">
+                    <div class="estado-nombre">Número de Autorización en Cero y Tarifa en Cero</div>
+                    <div class="estado-descripcion">
+                        Ambos campos están en cero: autorización y tarifa. Ambos necesitan valores válidos.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Ingresar valores válidos en ambos</span>
+                </div>
+
+                <div class="estado-card" data-keywords="autorizacion cero tarifa incorrecta">
+                    <div class="estado-nombre">Número de Autorización en Cero y Tarifa de Cuota Incorrecta</div>
+                    <div class="estado-descripcion">
+                        La autorización está en cero y la tarifa no es una de las aceptadas.
+                    </div>
+                    <span class="tag tag-error">✗ Error múltiple</span>
+                    <span class="estado-accion">Ingresar autorización válida y tarifa correcta</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-results hidden" id="noResults">
+            <p>😔 No se encontraron resultados para tu búsqueda</p>
+        </div>
+
+        <div class="export-section">
+            <button class="export-btn" onclick="exportToCSV()">📥 Exportar a CSV</button>
+        </div>
+
+        <div class="footer">
+            <img src="https://s3.us-east-2.amazonaws.com/privilegioscolsanitasdisk/temporal/1689104455Logo-Keralty_Colsanitas_1000x385px.jpg" alt="Ópticas Keralty">
+            <div class="footer-text">
+                Sistema de Validación de Subtipificación | Ópticas Keralty
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const contentArea = document.getElementById('contentArea');
+        const noResults = document.getElementById('noResults');
+        const cards = document.querySelectorAll('.estado-card');
+        const categories = document.querySelectorAll('.category');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                categories.forEach(cat => cat.classList.remove('hidden'));
+                cards.forEach(card => card.classList.remove('hidden'));
+                noResults.classList.add('hidden');
+                contentArea.classList.remove('hidden');
+                return;
+            }
+
+            let hasResults = false;
+
+            cards.forEach(card => {
+                const nombre = card.querySelector('.estado-nombre').textContent.toLowerCase();
+                const descripcion = card.querySelector('.estado-descripcion').textContent.toLowerCase();
+                const keywords = card.getAttribute('data-keywords').toLowerCase();
+                
+                if (nombre.includes(searchTerm) || descripcion.includes(searchTerm) || keywords.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                    hasResults = true;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            categories.forEach(category => {
+                const visibleCards = category.querySelectorAll('.estado-card:not(.hidden)');
+                if (visibleCards.length === 0) {
+                    category.classList.add('hidden');
+                } else {
+                    category.classList.remove('hidden');
+                }
+            });
+
+            if (!hasResults) {
+                contentArea.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                contentArea.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
+        });
+
+        function exportToCSV() {
+            const data = [
+                ['Estado', 'Descripción', 'Categoría', 'Acción Recomendada'],
+                ['Facturar', 'El registro cumple con todos los requisitos necesarios y está listo para ser facturado. Todos los datos de autorización, vales y tarifas están correctos.', 'Estados Exitosos', 'Proceder a facturación'],
+                ['Consultar Proceso de Facturación', 'El caso no coincide con ninguna regla conocida de subtipificación. Se debe solicitar al área de negocio información sobre a quién le pertenece facturar esa entidad o cómo se debe realizar el proceso de facturación.', 'Requiere Validación Manual', 'Solicitar información a negocio'],
+                ['Sin Reportar por parte de la sede', 'Aplica específicamente a "Convenios Externos" donde la sede no ha reportado la información necesaria para procesar la facturación.', 'Requiere Validación Manual', 'Esperar reporte de sede'],
+                ['Sin Número de Vale', 'El campo de número de vale está vacío o en blanco, pero es requerido para este tipo de servicio (consultas en Colsanitas o Medisanitas).', 'Errores de Número de Vale', 'Solicitar número de vale'],
+                ['Formato de Vale Incorrecto', 'El número de vale no tiene el formato correcto. Debe ser únicamente números (sin espacios, guiones, puntos o texto adicional).', 'Errores de Número de Vale', 'Corregir formato del vale'],
+                ['Número de Vale en Cero', 'El número de vale está registrado como "0" (cero), lo cual no es un valor válido para identificar una autorización de servicio.', 'Errores de Número de Vale', 'Ingresar vale válido'],
+                ['Sin Número de Autorización', 'El campo de número de autorización está vacío o en blanco, pero es requerido para este tipo de insumo o servicio.', 'Errores de Número de Autorización', 'Solicitar autorización'],
+                ['Formato de Autorización Incorrecto', 'El número de autorización no cumple con el formato requerido. Debe ser únicamente números (sin espacios, guiones, puntos o texto) y tener al menos 6 dígitos.', 'Errores de Número de Autorización', 'Corregir formato'],
+                ['Número de Autorización en Cero', 'El número de autorización está registrado como "0" (cero), lo cual no es válido. Se requiere un número de autorización real.', 'Errores de Número de Autorización', 'Ingresar autorización válida'],
+                ['Sin Tarifa de Cuota', 'El campo de tarifa de cuota está vacío, pero es requerido para este tipo de servicio. La tarifa debe estar registrada.', 'Errores de Tarifa', 'Registrar tarifa'],
+                ['Tarifa en Cero / Tarifa de Cuota en Cero', 'La tarifa está registrada como "0" (cero), lo cual no es válido. Debe tener un valor correspondiente a las tarifas aceptadas.', 'Errores de Tarifa', 'Ingresar tarifa correcta'],
+                ['Tarifa de Cuota Incorrecta', 'La tarifa ingresada no está dentro de las tarifas aceptadas (18200, 19200, 4500, 4700, 50300, 47700, 8000) dentro de la entidad EPS Sanitas. Se debe usar una de las tarifas válidas.', 'Errores de Tarifa', 'Usar tarifa aceptada'],
+                ['Formato de Tarifa Incorrecto', 'El valor de la tarifa no tiene un formato numérico válido. Debe ser un número sin texto adicional.', 'Errores de Tarifa', 'Corregir formato'],
+                ['Sin Número de Autorización y Sin Tarifa de Cuota', 'Faltan ambos campos: el número de autorización y la tarifa de cuota. Ambos son requeridos.', 'Errores Combinados', 'Completar ambos campos'],
+                ['Sin Número de Autorización y Formato de Tarifa Incorrecto', 'Falta el número de autorización y además la tarifa tiene un formato incorrecto.', 'Errores Combinados', 'Completar autorización y corregir tarifa'],
+                ['Sin Número de Autorización y Tarifa en Cero', 'Falta el número de autorización y la tarifa está en cero.', 'Errores Combinados', 'Completar autorización e ingresar tarifa'],
+                ['Sin Número de Autorización y Tarifa de Cuota Incorrecta', 'Falta el número de autorización y además la tarifa no es una de las aceptadas.', 'Errores Combinados', 'Completar autorización y usar tarifa válida'],
+                ['Formato de Autorización Incorrecto y Sin Tarifa de Cuota', 'El formato de la autorización es incorrecto y además falta la tarifa.', 'Errores Combinados', 'Corregir autorización y agregar tarifa'],
+                ['Formato de Autorización Incorrecto y Formato de Tarifa Incorrecto', 'Ambos campos tienen formato incorrecto: la autorización y la tarifa.', 'Errores Combinados', 'Corregir ambos formatos'],
+                ['Formato de Autorización Incorrecto y Tarifa en Cero', 'El formato de la autorización es incorrecto y la tarifa está en cero.', 'Errores Combinados', 'Corregir autorización e ingresar tarifa'],
+                ['Formato de Autorización Incorrecto y Tarifa de Cuota Incorrecta', 'El formato de la autorización es incorrecto y la tarifa no es válida.', 'Errores Combinados', 'Corregir autorización y usar tarifa válida'],
+                ['Número de Autorización en Cero y Sin Tarifa de Cuota', 'La autorización está en cero y falta la tarifa.', 'Errores Combinados', 'Ingresar autorización válida y tarifa'],
+                ['Número de Autorización en Cero y Formato de Tarifa Incorrecto', 'La autorización está en cero y el formato de la tarifa es incorrecto.', 'Errores Combinados', 'Ingresar autorización válida y corregir tarifa'],
+                ['Número de Autorización en Cero y Tarifa en Cero', 'Ambos campos están en cero: autorización y tarifa. Ambos necesitan valores válidos.', 'Errores Combinados', 'Ingresar valores válidos en ambos'],
+                ['Número de Autorización en Cero y Tarifa de Cuota Incorrecta', 'La autorización está en cero y la tarifa no es una de las aceptadas.', 'Errores Combinados', 'Ingresar autorización válida y tarifa correcta']
+            ];
+
+            let csvContent = '\uFEFF';
+            data.forEach(row => {
+                const escapedRow = row.map(cell => `"${cell.replace(/"/g, '""')}"`);
+                csvContent += escapedRow.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'diccionario_subtipificacion_keralty.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
